@@ -20,7 +20,7 @@ setup(
     ),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/anonymous-morl-interp/morl-interp",
+    url="https://github.com/redcican/morl-interp",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

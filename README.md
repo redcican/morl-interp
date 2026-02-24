@@ -7,7 +7,7 @@ Official implementation of the paper:
 
 > **Multi-Objective Evolutionary Reinforcement Learning for Pareto-Optimal Interpretable Policies**
 > Shikun Chen, Yangguang Liu
-> *Applied Soft Computing*, Elsevier
+
 
 ## Overview
 

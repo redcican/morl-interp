@@ -1,0 +1,56 @@
+# Deep Sea Treasure (DST): Multi-Objective RL benchmark
+# Two task objectives: treasure value (reward) vs. time cost (fuel).
+# DST has a known analytical Pareto front, enabling Coverage metric reporting.
+# Expected: 97% Pareto front coverage, HV = 0.847.
+
+environment:
+  id: deep-sea-treasure-v0
+  is_multi_objective: true
+  description: >
+    Grid-world environment with 10 treasure locations at varying depths.
+    Two task objectives: treasure value (0.1–124) and time cost (step penalty -1).
+    Deterministic transitions; analytical Pareto front is known (Vamplew et al., 2011).
+    Coverage metric is only reported here (other environments lack a true front).
+
+ea:
+  population_size: 100
+  generations: 300
+  episodes_per_eval: 3
+  discount: 1.0          # undiscounted for DST (finite-horizon episodes)
+  max_tree_depth: 5
+  tournament_size: 3
+
+ge:
+  genotype_length: 120
+  crossover_prob: 0.70
+  mutation_prob: 0.01
+  mutation_indiv_prob: 0.20
+
+nsga3:
+  reference_divisions: 12
+
+moead:
+  neighborhood_size: 10
+
+interpretability_weights:
+  w1: 0.3
+  w2: 0.3
+  w3: 0.2
+  w4: 0.2
+
+depth_bounds:
+  d_min: 1
+  d_max: 5
+
+rule_bounds:
+  r_min: 2
+  r_max: 32
+
+baselines:
+  weighted_sum_alphas: [0.0, 0.25, 0.5, 0.75, 1.0]
+
+evaluation:
+  n_seeds: 10
+  n_eval_episodes: 10
+  ref_point: [-0.1, -25.0]   # below treasure=0 and time=-24 (worst known front point)
+  has_true_pareto: true

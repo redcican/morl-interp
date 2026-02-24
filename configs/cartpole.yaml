@@ -1,0 +1,59 @@
+# CartPole-v1: Performance vs. Interpretability
+# Standard single-reward environment; interpretability treated as second objective.
+# Expected: near-parity between interpretable and neural policies (98.5% perf retention).
+
+environment:
+  id: CartPole-v1
+  is_multi_objective: false
+  description: >
+    Classic cart-pole balancing. 4D state space (cart position, cart velocity,
+    pole angle, pole angular velocity). Discrete action space (push left / right).
+    Interpretable policies achieve near-parity with neural networks, validating
+    Theorem 3 (Performance Parity) for low-dimensional environments.
+
+ea:
+  population_size: 100
+  generations: 200
+  episodes_per_eval: 5
+  discount: 0.99
+  max_tree_depth: 5
+  tournament_size: 3
+
+ge:
+  genotype_length: 100
+  crossover_prob: 0.70
+  mutation_prob: 0.01         # per-codon mutation probability
+  mutation_indiv_prob: 0.20   # per-individual mutation application probability
+
+nsga3:
+  reference_divisions: 12     # generates 13 reference points for 2 objectives
+
+moead:
+  neighborhood_size: 10
+
+interpretability_weights:
+  w1: 0.3   # M_depth  (structural: depth)
+  w2: 0.3   # M_rules  (structural: rule count)
+  w3: 0.2   # M_temporal (behavioral: action consistency)
+  w4: 0.2   # M_causal   (behavioral: state coverage)
+
+depth_bounds:
+  d_min: 1
+  d_max: 5   # matches max_tree_depth
+
+rule_bounds:
+  r_min: 2
+  r_max: 32  # 2^max_tree_depth
+
+baselines:
+  weighted_sum_alphas: [0.0, 0.25, 0.5, 0.75, 1.0]
+  viper:
+    n_ppo_steps: 100000
+    max_depth: 5
+    n_dagger_iters: 10
+    n_dagger_episodes: 20
+
+evaluation:
+  n_seeds: 10
+  n_eval_episodes: 20
+  ref_point: [-500.0, -0.1]   # reference point for hypervolume computation

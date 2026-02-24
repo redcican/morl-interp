@@ -1,0 +1,55 @@
+# MO-HalfCheetah: Multi-Objective RL benchmark (continuous control)
+# Two task objectives: forward velocity vs. energy efficiency (minimize control cost).
+# 17D state, 6D continuous action. Tests scalability to non-convex Pareto fronts.
+# Expected: HV = 0.748, outperforms weighted sum by 28.1%.
+
+environment:
+  id: mo-halfcheetah-v4
+  is_multi_objective: true
+  description: >
+    MuJoCo HalfCheetah with dual reward objectives: forward velocity (maximize)
+    and energy efficiency / negative control cost (maximize). 17D state space,
+    6D continuous action space. Demonstrates NSGA-III's advantage over linear
+    scalarization on non-convex Pareto fronts.
+
+ea:
+  population_size: 100
+  generations: 500
+  episodes_per_eval: 5
+  discount: 0.99
+  max_tree_depth: 7
+  tournament_size: 3
+
+ge:
+  genotype_length: 200   # longer genotype for complex continuous control
+  crossover_prob: 0.70
+  mutation_prob: 0.01
+  mutation_indiv_prob: 0.20
+
+nsga3:
+  reference_divisions: 12
+
+moead:
+  neighborhood_size: 10
+
+interpretability_weights:
+  w1: 0.3
+  w2: 0.3
+  w3: 0.2
+  w4: 0.2
+
+depth_bounds:
+  d_min: 1
+  d_max: 7
+
+rule_bounds:
+  r_min: 2
+  r_max: 128
+
+baselines:
+  weighted_sum_alphas: [0.0, 0.25, 0.5, 0.75, 1.0]
+
+evaluation:
+  n_seeds: 10
+  n_eval_episodes: 10
+  ref_point: [-1.0, -1.0]

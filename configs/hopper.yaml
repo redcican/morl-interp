@@ -1,0 +1,59 @@
+# Hopper-v3: Performance vs. Interpretability (continuous control)
+# Standard MuJoCo task; interpretability treated as second objective.
+# 11D state, 3D continuous action. Uses continuous action adaptation for M_temporal.
+# Expected: 87.3% performance retention with 68% interpretability.
+
+environment:
+  id: Hopper-v3
+  is_multi_objective: false
+  description: >
+    MuJoCo three-link bipedal robot. 11D state (joint angles, velocities, torso tilt).
+    3D continuous action space (torques). Tests decision trees in high-dimensional
+    continuous control. Performance retention ~87% due to complex dynamics.
+
+ea:
+  population_size: 100
+  generations: 500
+  episodes_per_eval: 5
+  discount: 0.99
+  max_tree_depth: 7   # deeper trees needed for continuous control
+  tournament_size: 3
+
+ge:
+  genotype_length: 150
+  crossover_prob: 0.70
+  mutation_prob: 0.01
+  mutation_indiv_prob: 0.20
+
+nsga3:
+  reference_divisions: 12
+
+moead:
+  neighborhood_size: 10
+
+interpretability_weights:
+  w1: 0.3
+  w2: 0.3
+  w3: 0.2
+  w4: 0.2
+
+depth_bounds:
+  d_min: 1
+  d_max: 7
+
+rule_bounds:
+  r_min: 2
+  r_max: 128   # 2^7
+
+baselines:
+  weighted_sum_alphas: [0.0, 0.25, 0.5, 0.75, 1.0]
+  viper:
+    n_ppo_steps: 500000
+    max_depth: 7
+    n_dagger_iters: 20
+    n_dagger_episodes: 20
+
+evaluation:
+  n_seeds: 10
+  n_eval_episodes: 10
+  ref_point: [-1.0, -0.1]
